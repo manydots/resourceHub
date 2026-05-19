@@ -1,0 +1,17 @@
+killall -9 df_guild_r
+
+sleep 1
+
+killall -9 df_guild_r
+
+cd /home/neople/dbmw_guild
+chmod 777 *
+rm -f  /home/neople/dbmw_guild/pid/*.pid
+rm -rf  /home/neople/dbmw_guild/log/*.*
+./df_dbmw_r dbmw_gld_siroco start &
+
+cd /home/neople/guild
+chmod 777 *
+rm -f  /home/neople/guild/pid/*.pid
+rm -rf  /home/neople/guild/log/*.*
+./df_guild_r gld_siroco start &

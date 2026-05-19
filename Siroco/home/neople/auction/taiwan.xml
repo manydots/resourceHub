@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- & : &amp; -->
+<!-- < : &lt; -->
+<!-- > : &gt; -->
+
+<xml>
+
+<option>
+    <charset type="chn"/> <!-- Korea : kor, China : chn, Japan : jpn USA : usa -->
+</option>
+
+<auction>
+	<string id="0"> <!--AUCTION_MESSAGE_RETURN_MONEY_UPPER_BUYER-->
+		<chn text="- 返还竞拍金额 -&#10;您在拍卖行竞拍的[%s%s]出现了新的竞拍者， 系统将返还您的竞拍金额。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+
+	<string id="1"> <!--AUCTION_MESSAGE_SUCCESSFUL_BIDDING_TO_OWNER-->
+		<chn text="- 已成功拍卖[%s%s] -&#10;  成交价 : + %d 金币&#10;  押金 : + %d 金币&#10;  手续费 : - %d 金币&#10;拍卖[%s%s]后， 您获得了%d金币。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+
+	<string id="2"> <!--AUCTION_MESSAGE_SUCCESSFUL_BIDDING_TO_BUYER-->
+		<chn text="- 恭喜您成功竞拍到[%s%s]。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+	
+	<string id="3"> <!--AUCTION_MESSAGE_FAILURE_BIDDING_TO_OWNER-->
+		<chn text="- 上架期限已过 -&#10;您上架的[%s%s]已过上架期限。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+	
+	<string id="4"> <!--AUCTION_MESSAGE_CANCEL_BIDDING_TO_BUYER-->
+		<chn text="- 拍卖者已取消上架 -&#10;[%s%s]已被取消上架， 系统将返还您的竞拍金额。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+	
+	<string id="5"> <!--AUCTION_MESSAGE_CANCEL_BIDDING_TO_OWNER-->
+		<chn text="- 取消物品上架 -&#10;您已取消[%s%s]的上架， 系统将返还您的上架物品。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+
+	<string id="6"> <!--AUCTION_MESSAGE_SUCCESSFUL_UNIT_BIDDING_TO_OWNER-->
+		<chn text="您在拍卖行上架的[%s%s] %d个已被拍下。&#10; 成交价: + %d 金币&#10; 押金: + %d 金币&#10; 手续费: - %d 金币&#10;拍卖[%s%s]共获得 %d 金币。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+
+	<string id="7"> <!--AUCTION_MESSAGE_NULL-->
+		<chn text="时间" />
+	</string>
+	
+	<string id="8">	<!--AUCTION_MESSAGE_SUCCESSFUL_BIDDING_GOLD_TO_OWNER-->
+		<chn text="- 已成功拍卖[%s%s] -&#10;  成交价 : + %d 代币券&#10;  手续费 : - %d 代币券&#10;拍卖[%s%s]后， 您获得了%d代币券。&#10;- 如果邮件为空,请小退重试 -&#0;" />
+	</string>
+	
+	<string id="100">
+		<chn text="拍卖行" />
+	</string>
+
+        <string id="101">
+                <chn text="罗杰·莱文" />
+        </string>
+	
+	<string id="102">
+		<chn text="金币寄售" />
+	</string>
+</auction>
+
+</xml>
+

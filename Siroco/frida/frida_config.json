@@ -1,0 +1,21 @@
+{
+    "db_config": {
+        "account": "game",
+        "password": "uu5!^%jg",
+        "port": 3306,
+        "ip": "127.0.0.1"
+    },
+    "lucky_online_user_event": {
+        "reward_items_list": [
+            [
+                3037,
+                88
+            ],
+            [
+                8,
+                8
+            ]
+        ],
+        "reward_cash_cera": 66
+    }
+}

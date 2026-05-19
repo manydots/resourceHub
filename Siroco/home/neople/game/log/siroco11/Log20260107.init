@@ -1,0 +1,37 @@
+[00:40:34] [!] Init Taiwan Garena Auth Key ... publickey.pem Success
+[00:40:34] [!] Init GlobalData ...
+[00:40:34] 	- DBConnector Init(masterdb 127.0.0.1/3306/game/d_taiwan) Success
+[00:40:34] 	- DBConnector Get Connection Info Success
+[00:40:34] 	- Open DB ... 
+[00:40:34] 		- Open(type: 1, 127.0.0.1/3306/game/d_taiwan
+[00:40:34] 		- Open(type: 2, 127.0.0.1/3306/game/taiwan_cain
+[00:40:34] 		- Open(type: 3, 127.0.0.1/3306/game/taiwan_cain_2nd
+[00:40:34] 		- Open(type: 4, 127.0.0.1/3306/game/taiwan_cain_log
+[00:40:34] 		- Open(type: 6, 127.0.0.1/3306/game/taiwan_login
+[00:40:34] 		- Open(type: 7, 127.0.0.1/3306/game/taiwan_prod
+[00:40:34] 		- Open(type: 8, 127.0.0.1/3306/game/d_guild
+[00:40:34] 		- Open(type: 9, 127.0.0.1/3306/game/taiwan_game_event
+[00:40:34] 		- Open(type:10, 127.0.0.1/3306/game/d_taiwan_secu
+[00:40:34] 		- Open(type:11, 127.0.0.1/3306/game/taiwan_login_play
+[00:40:34] 		- Open(type:12, 127.0.0.1/3306/game/taiwan_cain_auction_gold
+[00:40:34] 		- Open(type:13, 127.0.0.1/3306/game/taiwan_se_event
+[00:40:34] 		- Open(type:14, 127.0.0.1/3306/game/taiwan_billing
+[00:40:34] 	- All DB Open Success
+[00:40:34] 	- Init Query Table Success
+[00:40:35] 	- Load GM List From DB
+[00:40:35] 	- GM m_id: 
+[00:40:37] [!] Init GlobalData Success
+[00:40:37] [!] Init HistoryLog Success
+[00:40:37] [!] Init DataManager ...
+[00:40:38] 	- InitRDARScriptStringManager Success
+[00:40:38] 	- Failed to import < OldEquipmentStatInfo.dat >
+[00:40:38] 	- Server version for antibot : 22000100
+[00:40:38] 	- Collect Dungeon Data Statistic start!
+[00:40:38] 	- Loading Money Limit per Level Success
+[00:40:38] 	- Loading Compound Item Success
+[00:40:38] 	- Loading ARAD - Event Upgrade Jar Success
+[00:40:38] 	- Loading Compound Avatar Success
+[00:40:38] 	- Loading Dungeons Success
+[00:40:38] 	- Loading Tower Of Despair System Success
+[00:40:38] 	- Loading Chatting Emoticon Success
+[00:40:38] 	- Loading Maps 

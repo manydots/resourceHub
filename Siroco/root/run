@@ -1,0 +1,127 @@
+#!/bin/bash
+
+cd /root
+./stop
+sleep 1
+./stop
+sleep 1
+
+# 定义客户端池大小
+export CLIENT_POOL_SIZE=3
+
+# 服务器名称
+SERVER_NAME="siroco"
+
+cd /home/neople/stun
+chmod 755 *
+rm -f  /home/neople/stun/pid/*.pid
+rm -rf /home/neople/stun/log/*.*
+./df_stun_r start &
+
+cd /home/neople/monitor
+chmod 755 *
+rm -f  /home/neople/monitor/pid/*.pid
+rm -rf /home/neople/monitor/log/*.*
+./df_monitor_r mnt_${SERVER_NAME} start &
+
+cd /home/neople/manager
+chmod 755 *
+rm -f  /home/neople/manager/pid/*.pid
+rm -rf /home/neople/manager/log/*.*
+./df_manager_r manager start &
+
+cd /home/neople/relay
+chmod 755 *
+rm -f  /home/neople/relay/pid/*.pid
+rm -rf /home/neople/relay/log/*.*
+./df_relay_r relay_200 start &
+
+cd /home/neople/bridge
+chmod 755 *
+rm -f  /home/neople/bridge/pid/*.pid
+rm -rf /home/neople/bridge/log/*.*
+#nice -n -19 ./df_bridge_r bridge start &
+LD_PRELOAD="/frida/bridgeslim.so" ./df_bridge_r bridge start &
+
+cd /home/neople/channel
+chmod 755 *
+rm -f  /home/neople/channel/pid/*.pid
+rm -rf /home/neople/channel/log/*.*
+#nice -n -19 ./df_channel_r channel start &
+LD_PRELOAD="/frida/channelslim.so" ./df_channel_r channel start &
+
+cd /home/neople/dbmw_guild
+chmod 755 *
+rm -f  /home/neople/dbmw_guild/pid/*.pid
+rm -rf /home/neople/dbmw_guild/log/*.*
+./df_dbmw_r dbmw_gld_${SERVER_NAME} start &
+
+cd /home/neople/dbmw_mnt
+chmod 755 *
+rm -f  /home/neople/dbmw_mnt/pid/*.pid
+rm -rf /home/neople/dbmw_mnt/log/*.*
+./df_dbmw_r dbmw_mnt_${SERVER_NAME} start &
+
+cd /home/neople/dbmw_stat
+chmod 755 *
+rm -f  /home/neople/dbmw_stat/pid/*.pid
+rm -rf /home/neople/dbmw_stat/log/*.*
+./df_dbmw_r dbmw_stat_${SERVER_NAME} start &
+
+cd /home/neople/auction
+chmod 755 *
+rm -f  /home/neople/auction/pid/*.pid
+rm -rf /home/neople/auction/log/*.*
+./df_auction_r ./cfg/auction_${SERVER_NAME}.cfg start ./df_auction_r &
+
+cd /home/neople/point
+chmod 755 *
+rm -f  /home/neople/point/pid/*.pid
+rm -rf /home/neople/point/log/*.*
+./df_point_r ./cfg/point_${SERVER_NAME}.cfg start df_point_r &
+
+cd /home/neople/guild
+chmod 755 *
+rm -f  /home/neople/guild/pid/*.pid
+rm -rf /home/neople/guild/log/*.*
+./df_guild_r gld_${SERVER_NAME} start &
+
+cd /home/neople/statics
+chmod 755 *
+rm -f  /home/neople/statics/pid/*.pid
+rm -rf /home/neople/statics/log/*.*
+./df_statics_r stat_${SERVER_NAME} start &
+
+cd /home/neople/coserver
+chmod 755 *
+rm -f  /home/neople/coserver/pid/*.pid
+rm -rf /home/neople/coserver/log/*.*
+./df_coserver_r coserver start &
+
+cd /home/neople/community
+chmod 755 *
+rm -f /home/neople/community/pid/*.pid
+rm -rf /home/neople/community/log/*.*
+./df_community_r community start &
+
+cd /home/neople/secsvr/gunnersvr
+chmod 755 *
+rm -f /home/neople/secsvr/gunnersvr/*.pid
+./gunnersvr -t30 -i1  &
+
+cd /home/neople/secsvr/zergsvr
+chmod 755 *
+rm -f /home/neople/secsvr/zergsvr/*.pid
+
+./secagent  &
+./zergsvr -t30 -i1  &
+
+cd /home/neople/game
+chmod 755 *
+rm -rf /home/neople/game/log/*
+
+sleep 1
+LD_PRELOAD="/frida/libhook.so /frida/frida.so" ./df_game_r "${SERVER_NAME}11" start &
+
+#sleep 2
+#./df_game_r "${SERVER_NAME}56" start &
