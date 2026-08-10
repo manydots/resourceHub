@@ -22,7 +22,7 @@ resourceHub/
 | 文档 / 发布 | 快捷链接 | 说明 |
 |------|----------|------|
 | DAFLogin 使用说明 | [docs/86JP/DAFLogin/use.md](docs/86JP/DAFLogin/use.md) | .NET WPF 登录器：账号注册/登录/改密、BAT 登录、插件加载、服务状态检测，通过 TCP+UDP+Protobuf 对接 Go 网关 |
-| Gateway 部署指南 | [docs/86JP/gateway/deploy.md](docs/86JP/gateway/deploy.md) | Go 账号网关：注册/登录/改密/管理重置/健康检查，支持 TCP/UDP/WebSocket，SQLite 存储，限流与鉴权 |
+| Gateway 部署指南 | [docs/86JP/Gateway/deploy.md](docs/86JP/Gateway/deploy.md) | Go 账号网关：注册/登录/改密/管理重置/健康检查，支持 TCP/UDP/WebSocket，SQLite 存储，限流与鉴权 |
 
 ## 网页版登录器
 
