@@ -235,6 +235,10 @@ server:
 | `max_password_length`   | `32`   | 密码最大长度               |
 | `max_login_fails`       | `5`    | 连续失败上限，达到后锁定账号 |
 | `login_lockout_minutes` | `5`    | 账号锁定时长（分钟）       |
+| `register_bonus.enabled`          | `false` | 是否在注册时赠送点券 |
+| `register_bonus.cera`             | `0`     | 注册赠送 cera 数量（0~10000000） |
+| `register_bonus.token_cera`       | `0`     | 注册赠送 token_cera 数量（0~10000000） |
+| `register_bonus.happy_token_cera` | `0`     | 注册赠送 happy_token_cera 数量（0~10000000） |
 
 ### admin 段
 
