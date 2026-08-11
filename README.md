@@ -8,7 +8,7 @@ resourceHub/
 ├── docs/                 # 使用与部署文档
 │   └── 86JP/             # 86JP 大区
 │       ├── DAFLogin/     # DAFLogin 登录器文档
-│       └── gateway/      # Gateway 网关部署文档
+│       └── Gateway/      # Gateway 网关部署文档
 ├── other/                # 其他资源
 │   ├── IDA Pro 9.1/      # IDA Pro 9.1 资源（0627 / 0725 / 1031）
 │   ├── Siroco/           # Siroco 大区文件（frida / home / lib / root / usr）
