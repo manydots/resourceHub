@@ -58,7 +58,7 @@
 
 #### 健康检查（CMD_HEALTH）
 
-- 探测游戏服务器频道端口（channel_port）和游戏端口（game_port）是否可达
+- 探测游戏服务器频道端口（channel_port）和游戏端口（game_ports，支持多个）是否可达
 - TCP/UDP/WebSocket 均可调用，无需鉴权，不受限流
 - 2 秒缓存避免高频穿透
 - UDP 健康检查按源 IP 限频防反射放大
@@ -93,6 +93,7 @@
 - 自动轮转与压缩（lumberjack）
 - 可配置保留数量、保留天数、单文件大小
 - 敏感字段（密码等）自动脱敏
+- **配置异常进日志文件**：启动时配置加载/校验失败（如 items 的 count/kind 越界）除终端报错外，会尽力把错误追加写入 `error.log`（按配置 `log.dir`，解析失败回退 `./logs`），便于后台运行排查
 
 ---
 
@@ -114,7 +115,8 @@
 | ------------------------------------- | :--: | -------------------- |
 | `gateway`（Windows 为 `gateway.exe`） |  是  | 网关主程序           |
 | `config.yaml`                         |  是  | 运行配置             |
-| `item_schema.sql`                     |  否  | 建表 SQL，首次建库用 |
+| `item_schema.sql`                     |  否  | 主建表 SQL，首次建库用 |
+| `register_bonus.sql`                  |  否  | 注册奖励日志独立建表 SQL（启用注册奖励时部署） |
 
 建议同目录放置，便于相对路径解析。
 
@@ -160,7 +162,7 @@
 | `udp_port`                 | `5056`            | UDP 端口，仅健康检查                                     |
 | `game_ip`                  | `127.0.0.1`       | 游戏服务器 IP，登录返回给客户端                          |
 | `channel_port`             | `7001`            | 频道端口，登录返回 + 健康检查                            |
-| `game_port`                | `10011`           | 游戏端口，健康检查                                       |
+| `game_ports`               | `10011,10161,10200` | 游戏端口，健康检查（支持整数或列表，列表全部可达才健康）   |
 | `game_health_check_ip`     | (空，沿用 game_ip) | 健康检查专用 IP；游戏 IP 为公网时同机探活填 `127.0.0.1`  |
 | `health_check_timeout_sec` | `5`               | 健康检查 TCP 探测超时（秒）                              |
 | `max_payload_bytes`        | `1048576`         | 单条消息最大字节（1MB）                                  |
@@ -218,8 +220,10 @@ server:
 | 配置项                  | 默认值              | 说明                                                             |
 | ----------------------- | ------------------- | ---------------------------------------------------------------- |
 | `path`                  | `./data/inventory.db` | SQLite 路径，相对路径基于工作目录                              |
-| `schema_file`           | `./item_schema.sql` | 建表 SQL，`schema_enabled` 开启时执行                            |
-| `schema_enabled`        | `false`             | 启动时应用 schema（幂等）；首次建库置 `true`，日常保持 `false`   |
+| `schema_enabled`        | `false`             | 仅控制主 schema_file 的启动应用（幂等）；首次建库置 `true`，日常保持 `false`   |
+| `schema_file`           | `./item_schema.sql` | 主建表 SQL，`schema_enabled` 开启时执行                            |
+| `extra_schema_enabled`  | `true`              | 仅控制附加 schema 的启动应用，默认开启，不随 `schema_enabled` 联动   |
+| `extra_schema_files`    | `[]`    | 附加建表 SQL 列表（如 `./register_bonus.sql`），`extra_schema_enabled` 开启时依次执行 |
 | `max_open_conns`        | `4`                 | 最大连接数                                                       |
 | `max_idle_conns`        | `2`                 | 最大空闲连接数                                                   |
 | `conn_max_idle_sec`     | `300`               | 空闲连接存活秒数                                                 |
@@ -235,10 +239,16 @@ server:
 | `max_password_length`   | `32`   | 密码最大长度               |
 | `max_login_fails`       | `5`    | 连续失败上限，达到后锁定账号 |
 | `login_lockout_minutes` | `5`    | 账号锁定时长（分钟）       |
-| `register_bonus.enabled`          | `false` | 是否在注册时赠送点券 |
-| `register_bonus.cera`             | `0`     | 注册赠送 cera 数量（0~10000000） |
-| `register_bonus.token_cera`       | `0`     | 注册赠送 token_cera 数量（0~10000000） |
-| `register_bonus.happy_token_cera` | `0`     | 注册赠送 happy_token_cera 数量（0~10000000） |
+| `register_bonus.enabled`          | `false` | 是否启用注册奖励（登记快照，登录时补发） |
+| `register_bonus.cera`             | `0`     | 补发 cera 数量（0~10000000） |
+| `register_bonus.token_cera`       | `0`     | 补发 token_cera 数量（0~10000000） |
+| `register_bonus.happy_token_cera` | `0`     | 补发 happy_token_cera 数量（0~10000000） |
+| `register_bonus.title`            | `注册奖励` | 物品邮件标题 |
+| `register_bonus.body`             | `注册奖励附件` | 物品邮件正文 |
+| `register_bonus.items`            | `[]`    | 补发物品列表（`item_id`/`count`/`kind`），可为空（仅点券）；`count` 不填默认 1，仅 消耗品(2)/材料(3) 支持 1~10000 堆叠，其余类型只能为 1 |
+| `register_bonus.item_expire_hours` | `24`   | 物品过期时间（小时），以注册时间 created_at 为基准，登录时检测：超期仍无角色则物品标记过期不再补发；点券永不过期 |
+
+> ⚠️ **启用前提**：开启 `register_bonus.enabled`（尤其配置 `items` 送物品）前，必须确认 `database.extra_schema_enabled: true` 且 `extra_schema_files` 包含 `register_bonus.sql`，否则 `register_bonus_log` 表缺失、登录补发持续失败。
 
 ### admin 段
 
@@ -275,8 +285,8 @@ server:
 
 采用 SQLite 单文件存储。
 
-- **接入已有游戏库**：`schema_enabled` 保持 `false`，配置 `database.path` 指向该库即可，不改表结构。
-- **首次建库**：置 `schema_enabled: true` 启动建表，完成后改回 `false`。
+- **接入已有游戏库**：`schema_enabled` 保持 `false`，配置 `database.path` 指向该库即可，不改表结构。附加表（如注册奖励 `register_bonus.sql`）由 `extra_schema_enabled` 独立控制（默认开启），不受 `schema_enabled` 影响。
+- **首次建库**：置 `schema_enabled: true` 启动建表，完成后改回 `false`；`extra_schema_enabled` 默认开启，附加表会随启动自动应用。
 - **Windows 路径**推荐正斜杠 `/`，反斜杠在双引号内需转义 `\\`。
 
 ---

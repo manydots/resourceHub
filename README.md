@@ -21,12 +21,12 @@ resourceHub/
 
 | 文档 / 发布 | 快捷链接 | 说明 |
 |------|----------|------|
-| DAFLogin 使用说明 | [docs/86JP/DAFLogin/use.md](docs/86JP/DAFLogin/use.md) | .NET WPF 登录器：账号注册/登录/改密、BAT 登录、插件加载、服务状态检测，通过 TCP+UDP+Protobuf 对接 Go 网关 |
-| Gateway 部署指南 | [docs/86JP/Gateway/deploy.md](docs/86JP/Gateway/deploy.md) | Go 账号网关：注册/登录/改密/管理重置/健康检查，支持 TCP/UDP/WebSocket，SQLite 存储，限流与鉴权 |
+| DAFLogin 使用说明 | [docs/86JP/DAFLogin/use.md](docs/86JP/DAFLogin/use.md) | 账号注册/登录/改密、BAT 登录、插件加载、服务状态检测，使用 Protobuf 对接 Gateway 网关协议 |
+| Gateway 部署指南 | [docs/86JP/Gateway/deploy.md](docs/86JP/Gateway/deploy.md) | 账号注册/登录/改密/重置/健康检查、限流与鉴权、协议白名单管理、配置注册奖励等|
 
 ## 网页版登录器
 
-[launch-helper](https://github.com/manydots/launch-helper) —— 通过浏览器自定义协议 `LaunchHelper` 一键启动 Windows 游戏，无需安装桌面登录器。
+[LaunchHelper](https://github.com/manydots/launch-helper) 通过浏览器自定义协议 `LaunchHelper` 启动 Windows 游戏。
 
 ## 其他资源
 
