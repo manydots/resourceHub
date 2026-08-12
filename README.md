@@ -17,14 +17,14 @@ resourceHub/
 └── README.md
 ```
 
-## [文档与 Release 导航](https://github.com/manydots/resourceHub/releases)
+## [Release](https://github.com/manydots/resourceHub/releases)
 
 | 文档 / 发布 | 快捷链接 | 说明 |
 |------|----------|------|
 | DAFLogin 使用说明 | [docs/86JP/DAFLogin/use.md](docs/86JP/DAFLogin/use.md) | 账号注册/登录/改密、BAT 登录、插件加载、服务状态检测，使用 Protobuf 对接 Gateway 网关协议 |
-| Gateway 部署指南 | [docs/86JP/Gateway/deploy.md](docs/86JP/Gateway/deploy.md) | 账号注册/登录/改密/重置/健康检查、限流与鉴权、协议白名单管理、配置注册奖励等|
+| Gateway 使用说明 | [docs/86JP/Gateway/deploy.md](docs/86JP/Gateway/deploy.md) | 账号注册/登录/改密/重置/健康检查、限流与鉴权、协议白名单管理、配置注册奖励、内置LaunchHelper网页登录器等|
 
-## 网页版登录器
+## 网页登录器
 
 [LaunchHelper](https://github.com/manydots/launch-helper) 通过浏览器自定义协议 `LaunchHelper` 启动 Windows 游戏。
 

@@ -245,8 +245,12 @@ server:
 | `register_bonus.happy_token_cera` | `0`     | 补发 happy_token_cera 数量（0~10000000） |
 | `register_bonus.title`            | `注册奖励` | 物品邮件标题 |
 | `register_bonus.body`             | `注册奖励附件` | 物品邮件正文 |
-| `register_bonus.items`            | `[]`    | 补发物品列表（`item_id`/`count`/`kind`），可为空（仅点券）；`count` 不填默认 1，仅 消耗品(2)/材料(3) 支持 1~10000 堆叠，其余类型只能为 1 |
+| `register_bonus.items`            | `[]`    | 补发物品列表（`item_id`/`count`/`kind`），可为空（仅点券）；个数不限（不建议过多）；同 `item_id` 的消耗品(2)/材料(3) 自动合并 count（合并后总量 ≤ `item_stack_limit`），其余类型不合并；同 `item_id` 配置不同 kind 启动报错；`count` 不填默认 1，消耗品/材料无单条上限（受 `item_stack_limit` 约束），其余类型只能为 1 |
 | `register_bonus.item_expire_hours` | `24`   | 物品过期时间（小时），以注册时间 created_at 为基准，登录时检测：超期仍无角色则物品标记过期不再补发；点券永不过期 |
+| `register_bonus.item_split_count` | `2000` | 物品 count 拆分阈值（单附件 count 上限）：合并后 count 超过此值按此值拆分多附件；仅作拆分参数，不参与 count 上限校验 |
+| `register_bonus.item_stack_limit` | `20000` | 堆叠物品同 `item_id` 合并后总数量上限（count 唯一上限，与 `item_split_count` 独立）：超限启动报错 |
+| `register_bonus.item_deliver_limit` | `100` | 物品投递次数上限（合并后邮件封数）：超此值记 warning 但仍投递全部 |
+| `register_bonus.item_attachments_per_mail` | `10` | 每封邮件最多附件个数：对齐 mail.MaxAttachmentsPerMail(10)，不建议修改 |
 
 > ⚠️ **启用前提**：开启 `register_bonus.enabled`（尤其配置 `items` 送物品）前，必须确认 `database.extra_schema_enabled: true` 且 `extra_schema_files` 包含 `register_bonus.sql`，否则 `register_bonus_log` 表缺失、登录补发持续失败。
 
