@@ -61,7 +61,7 @@
 ```
 resourceHub/
 ├── docs/                 # 使用与部署文档
-│   └── 86JP/             # 86JP 大区
+│   └── 86JP/             # 86JP相关
 │       ├── ClientPatch/  # 客户端插件
 │       ├── DAFLogin/     # DAFLogin 登录器文档
 │       └── Gateway/      # Gateway 网关部署文档
