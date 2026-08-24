@@ -4,7 +4,7 @@
 
 ## 一、功能简介
 
-游戏账号网关，提供注册、登录、改密、管理员重置/查询账号、健康检查，可选内置网页登录器供浏览器登录。启用网页登录器后，浏览器访问 `http://<服务器IP>:5055/` 即可登录。
+游戏账号网关，提供注册、登录、改密、管理员重置/查询账号、邮件投递物品、角色树查询、健康检查，可选内置网页登录器供浏览器登录。启用网页登录器后，浏览器访问 `http://<服务器IP>:5055/` 即可登录。
 
 ### 1.1 协议支持
 
@@ -41,7 +41,7 @@
 - 旧密码错误计入失败锁定（与登录共享计数）
 - 仅支持 TCP/WebSocket
 
-#### 管理员重置密码（CMD_ADMIN_RESET）
+#### 管理员重置密码（CMD_ACCOUNT_RESET）
 
 - 管理接口，无需旧密码强制重置
 - 需通过 `auth_key` 授权
@@ -56,9 +56,34 @@
 - 需通过 `auth_key` 授权
 - 仅支持 TCP/WebSocket
 
+#### 邮件投递物品（CMD_SEND_ITEMS）
+
+- 管理接口，以系统邮件向账号指定角色投递物品、装备、宠物等（物品种类 kind 1-14：含时装徽章 9、副职业材料 10、公会勋章 12、守护珠 13 等新类型；特殊材料 11 与史诗碎片 14 不能作为邮件附件）
+- 收件角色 ID 必填（`character_id > 0`），角色需存活且属于该账号
+- 附件自动拆分：堆叠类（消耗品/材料/时装徽章/副职业材料/守护珠）单附件 count 上限 2000，每封附件上限 10 条
+- 需通过 `auth_key` 授权
+- 仅支持 TCP/WebSocket
+
+#### 查询账号角色树（CMD_GET_ROLES）
+
+- 管理接口，查询账号角色二维数据（账号 → 角色列表）
+- 返回角色等级、职业、经验、基础属性（HP/MP/攻防）等
+- 仅返回存活角色
+- 需通过 `auth_key` 授权
+- 仅支持 TCP/WebSocket
+
+#### 清空角色邮箱（CMD_CLEAR_MAILBOX）
+
+- 管理接口，清空指定角色邮箱：对收件箱内全部未删除邮件（含保管与已过期邮件）打软删除标记，客户端邮箱不再显示
+- 与游戏服务端用户侧删除落库位置一致（只标记收件人行，邮件本体与附件保留）；管理端清理不要求先领取附件/金币
+- 无可清理邮件时仍返回成功（`deleted_count=0`），重复调用幂等
+- 目标角色 ID 必填（`character_id > 0`），角色需存活且属于该账号
+- 需通过 `auth_key` 授权
+- 仅支持 TCP/WebSocket
+
 #### 健康检查（CMD_HEALTH）
 
-- 探测游戏服务器频道端口（channel_port）和游戏端口（game_ports，支持多个）是否可达
+- 探测游戏服务器频道端口（channel_port）和游戏端口（game_ports，支持多个，任一可达即健康）是否可达
 - TCP/UDP/WebSocket 均可调用，无需鉴权，不受限流
 - 2 秒缓存避免高频穿透
 - UDP 健康检查按源 IP 限频防反射放大
@@ -162,7 +187,7 @@
 | `udp_port`                 | `5056`            | UDP 端口，仅健康检查                                     |
 | `game_ip`                  | `127.0.0.1`       | 游戏服务器 IP，登录返回给客户端                          |
 | `channel_port`             | `7001`            | 频道端口，登录返回 + 健康检查                            |
-| `game_ports`               | `10011,10161,10200` | 游戏端口，健康检查（支持整数或列表，列表全部可达才健康）   |
+| `game_ports`               | `10011,10161,10200` | 游戏端口，健康检查（支持整数或列表，列表任一可达即健康）   |
 | `game_health_check_ip`     | (空，沿用 game_ip) | 健康检查专用 IP；游戏 IP 为公网时同机探活填 `127.0.0.1`  |
 | `health_check_timeout_sec` | `5`               | 健康检查 TCP 探测超时（秒）                              |
 | `max_payload_bytes`        | `1048576`         | 单条消息最大字节（1MB）                                  |
@@ -186,7 +211,10 @@
 | `CMD_LOGIN`           | 账号登录       | TCP/WebSocket    | 无               | 校验密码，返回游戏启动参数             |
 | `CMD_CHANGE_PASSWORD` | 修改密码       | TCP/WebSocket    | 无（需旧密码）   | 用户自助改密，旧密码错误计入锁定       |
 | `CMD_ACCOUNT_INFO`    | 账号信息查询   | TCP/WebSocket    | `auth_key` 授权  | 管理接口，查询账号全量信息             |
-| `CMD_ADMIN_RESET`     | 管理员重置密码 | TCP/WebSocket    | `auth_key` 授权  | 管理接口，强制重置密码，无需旧密码     |
+| `CMD_ACCOUNT_RESET`   | 账号密码重置   | TCP/WebSocket    | `auth_key` 授权  | 管理接口，强制重置密码，无需旧密码 |
+| `CMD_SEND_ITEMS`      | 邮件投递物品   | TCP/WebSocket    | `auth_key` 授权  | 管理接口，系统邮件投递物品/装备/宠物   |
+| `CMD_GET_ROLES`       | 查询账号角色树 | TCP/WebSocket    | `auth_key` 授权  | 管理接口，查询账号角色二维数据(树)     |
+| `CMD_CLEAR_MAILBOX`   | 清空角色邮箱   | TCP/WebSocket    | `auth_key` 授权  | 管理接口，软删除清理角色收件箱全部邮件 |
 
 配置示例：
 
@@ -198,7 +226,10 @@ server:
     - CMD_LOGIN
     - CMD_CHANGE_PASSWORD
     - CMD_ACCOUNT_INFO
-    - CMD_ADMIN_RESET
+    - CMD_ACCOUNT_RESET
+    - CMD_SEND_ITEMS
+    - CMD_GET_ROLES
+    - CMD_CLEAR_MAILBOX
 ```
 
 ```yaml
@@ -245,7 +276,7 @@ server:
 | `register_bonus.happy_token_cera` | `0`     | 补发 happy_token_cera 数量（0~10000000） |
 | `register_bonus.title`            | `注册奖励` | 物品邮件标题 |
 | `register_bonus.body`             | `注册奖励附件` | 物品邮件正文 |
-| `register_bonus.items`            | `[]`    | 补发物品列表（`item_id`/`count`/`kind`），可为空（仅点券）；个数不限（不建议过多）；同 `item_id` 的消耗品(2)/材料(3) 自动合并 count（合并后总量 ≤ `item_stack_limit`），其余类型不合并；同 `item_id` 配置不同 kind 启动报错；`count` 不填默认 1，消耗品/材料无单条上限（受 `item_stack_limit` 约束），其余类型只能为 1 |
+| `register_bonus.items`            | `[]`    | 补发物品列表（`item_id`/`count`/`kind`/`item_type`），可为空（仅点券）；个数不限（不建议过多）；同 `item_id` 的堆叠类（消耗品2/材料3/时装徽章9/副职业材料10/守护珠13）自动合并 count（合并后总量 ≤ `item_stack_limit`），其余类型不合并；同 `item_id` 配置不同 kind/item_type 启动报错；`count` 不填默认 1，堆叠类无单条上限（受 `item_stack_limit` 约束），其余类型只能为 1；`kind` 必填 1-14：1=装备 2=消耗品 3=材料 5=宠物 6=宠物装备 8=时装 9=时装徽章 10=副职业材料 12=公会勋章 13=守护珠（11=特殊材料、14=史诗碎片不能作为邮件附件，启动报错）；`item_type` 来源列表类型：0\|2=主背包(默认，仅允许 kind 1/2/3/9/10/12/13) 1=时装(Avatar，仅允许 kind 8) 3\|7=宠物(Pet，仅允许 kind 5/6/7)，不匹配直接拒绝启动 |
 | `register_bonus.item_expire_hours` | `24`   | 物品过期时间（小时），以注册时间 created_at 为基准，登录时检测：超期仍无角色则物品标记过期不再补发；点券永不过期 |
 | `register_bonus.item_split_count` | `2000` | 物品 count 拆分阈值（单附件 count 上限）：合并后 count 超过此值按此值拆分多附件；仅作拆分参数，不参与 count 上限校验 |
 | `register_bonus.item_stack_limit` | `20000` | 堆叠物品同 `item_id` 合并后总数量上限（count 唯一上限，与 `item_split_count` 独立）：超限启动报错 |
@@ -299,9 +330,9 @@ server:
 
 `web_enabled: true` 后，`web_port` 同时提供前端页面与 `/gateway` WebSocket 通道，浏览器访问 `http://<服务器IP>:5055/` 即可登录。前端通常已嵌入二进制；未嵌入则用 `web_dist_dir` 指定目录。
 
-### 5.1 管理员重置账号密码（以 10038 为例）
+### 5.1 管理员重置账号密码（以 10001 为例）
 
-忘记密码或账号被锁定需要管理员介入时，可直接在网页登录器中重置，无需旧密码。本质是前端经 `/gateway` WebSocket 发送 `CMD_ADMIN_RESET` 请求，服务端校验 `auth_key` 后强制改密并解除锁定。
+忘记密码或账号被锁定需要管理员介入时，可直接在网页登录器中重置，无需旧密码。本质是前端经 `/gateway` WebSocket 发送 `CMD_ACCOUNT_RESET`请求，服务端校验 `auth_key` 后强制改密并解除锁定。
 
 操作步骤：
 
@@ -310,7 +341,7 @@ server:
 
    | 输入项   | 内容                                                             |
    | -------- | ---------------------------------------------------------------- |
-   | 账号     | `10038`                                                          |
+   | 账号     | `10001`                                                          |
    | 管理密钥 | `admin.auth_key` 的值（或环境变量 `GATEWAY_ADMIN_AUTH_KEY`）     |
    | 新密码   | 6-32 位                                                          |
    | 确认密码 | 与"新密码"一致                                                   |
@@ -319,7 +350,7 @@ server:
 
 > 说明：
 >
-> - 对应命令 `CMD_ADMIN_RESET`，请求体 `AdminResetPasswordRequest{m_id, new_password, new_password_confirm}`，请求头 `auth_key` 填管理密钥；该命令未在 `command_whitelist` 中时返回 `3008`。
+> - 对应命令 `CMD_ACCOUNT_RESET`，请求体 `AccountResetPasswordRequest{m_id, new_password, new_password_confirm}`，请求头 `auth_key` 填管理密钥；该命令未在 `command_whitelist` 中时返回 `3008`。
 > - `auth_key` 不匹配返回 `1010`，账号不存在返回 `1007`，密码长度不符返回 `1005`，重置成功会同步解除账号锁定（`1012`）。
 > - 管理密钥经 WebSocket 明文传输，仅建议在内网或已启用 HTTPS/WSS 反代的环境操作。
 
@@ -358,6 +389,8 @@ server:
 | `1010` ｜授权 auth_key 无效                                     |
 | `1011` ｜账号包含非法字符                                       |
 | `1012` ｜账号已被临时锁定，请稍后再试                           |
+| `1013` ｜收件角色ID无效                                         |
+| `1014` ｜邮件附件不能为空                                       |
 | `3002` ｜请求过于频繁                                           |
 | `3003` ｜未知命令                                               |
 | `3004` ｜该命令不支持 UDP 传输                                  |
